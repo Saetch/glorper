@@ -90,11 +90,11 @@ fn main() {
 
 
 
+        println!("Press H to tickle Glorper!\n\n");
 
         /*
-         * This threads game loop (Rendering)
+         * This thread's game loop (Rendering and sending messages over the channel)
          */
-        println!("Press H to tickle Glorper!\n\n");
         let mut start = Instant::now();                         
         while let Some(e) = events.next(&mut window) {
             if let Some(args) = e.render_args() {
