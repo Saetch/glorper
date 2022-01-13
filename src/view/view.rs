@@ -41,7 +41,7 @@ impl View {
 
 
 
-         let r_object = TextureObject::new();
+         let r_object = TextureObject::new_test();
 
         self.gl.draw(args.viewport(), |c, gl| {
             //the functions used here, like clear/rectangle are in namespace graphics::*, the use statement makes these omittable

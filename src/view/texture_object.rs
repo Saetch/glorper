@@ -16,7 +16,7 @@ pub struct TextureObject{
 
 impl TextureObject {
 
-    pub fn new() -> Self{
+    pub fn new_test() -> Self{
 
         //https://docs.piston.rs/piston_window/piston_window/struct.TextureSettings.html
         let texture_settings = TextureSettings::new();
