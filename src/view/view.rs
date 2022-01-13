@@ -87,7 +87,7 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
 pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, r : &TextureObject){
     let (image, texture) = r.get_draw_references();
 
-    let transform = c.transform.trans(args.window_size[0]/2.0 - 72.0, args.window_size[1]/2.0 - 51.0);
+    let transform = c.transform.trans(args.window_size[0]/2.0 - image.rectangle.unwrap()[2]/2.0, args.window_size[1]/2.0 - image.rectangle.unwrap()[3]/2.0);
 
     image.draw(texture, &DrawState::default(), transform, gl);
 

@@ -25,7 +25,7 @@ impl TextureObject {
 
 
         TextureObject{
-            image: Image::new().rect([0.0, 0.0, 144.0, 103.0]),
+            image: Image::new().rect([0.0, 0.0, 72.0, 51.0]),
             texture: Texture::from_path(Path::new("087glimpse.png"), &texture_settings).unwrap()
         }
     }
