@@ -1,6 +1,11 @@
-use graphics::{Context, Rectangle, rectangle::rectangle_by_corners, clear, DrawState};
-use opengl_graphics::GlGraphics;
+use std::{sync::Arc, path::Path};
+
+use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed};
+use opengl_graphics::{GlGraphics};
 use piston::RenderArgs;
+
+use super::texture_object::TextureObject;
+
 
 pub struct View{
     pub(crate) gl: GlGraphics,
@@ -13,24 +18,42 @@ pub struct View{
         const RED: [f32; 4] = [1.0, 0.0, 0.0, 0.7];
         const BLUE: [f32; 4] = [0.0, 0.0, 1.0, 1.0];
         const DARKGREY: [f32; 4] = [0.2, 0.2, 0.2, 1.0];
+        const BLACK : [f32; 4] = [0.02, 0.02, 0.02, 1.0];
+        const DARKRED: [f32; 4] = [0.3, 0.02, 0.0, 1.0];
 
 impl View {
     
     pub fn render(&mut self, args: &RenderArgs){
 
 
-        //get relevant info here and drop the RwLockGuards before self.gl.draw if possible. Otherwise get these in the draw function
 
 
 
 
+
+
+
+
+        
+
+
+         //get relevant info here and drop the RwLockGuards before self.gl.draw if possible. Otherwise get these in the draw function
+
+
+
+         let r_object = TextureObject::new();
 
         self.gl.draw(args.viewport(), |c, gl| {
             //the functions used here, like clear/rectangle are in namespace graphics::*, the use statement makes these omittable
-            clear(DARKGREY, gl);
+            clear(DARKRED, gl);
 
             View::draw_background(&c, gl, args);
-            View::draw_objects(&c, gl, args);
+            View::draw_objects(&c, gl, args, &r_object);
+
+
+
+        
+
 
 //transformations are calculatedfor the viewPort. This means, that the center of the screen will be moved to x,y, then 
 //rotated, then offset an then the square is drawn with the top left corner at the given point. Then the screen is reset to the default
@@ -55,15 +78,18 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
 
     let window_width = args.window_size[0];
     let window_height = args.window_size[1];
-    let rec = Rectangle::new(BLUE);
+    let rec = Rectangle::new(BLACK);
     let bkgrnd = rectangle_by_corners(50.0 , 50.0,  750.0, 550.0);
     //this function was called with &c, but it does not need to be dereferenced here (*c), as this is automatically done, so Object functions can be called on reference (autoderef)
     rec.draw(bkgrnd, &DrawState::default(), c.transform, gl);
 }
 
-pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
+pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, r : &TextureObject){
+    let (image, texture) = r.get_draw_references();
 
+    let transform = c.transform.trans(args.window_size[0]/2.0 - 72.0, args.window_size[1]/2.0 - 51.0);
 
+    image.draw(texture, &DrawState::default(), transform, gl);
 
 
 }
