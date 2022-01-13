@@ -125,7 +125,7 @@ fn main() {
 
 
 
-        //sync threads
+        //sync threads when the game gets closed
 
         drop(modelchannelsender);
         drop(controllerchannelsender);

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use graphics::{Image,  rectangle::{square, self}};
+use graphics::{Image};
 
 
 //this needs updating if graphics backend is changed!
