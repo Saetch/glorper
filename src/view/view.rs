@@ -84,6 +84,7 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
     rec.draw(bkgrnd, &DrawState::default(), c.transform, gl);
 }
 
+#[inline(always)]
 pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, r : &TextureObject){
     let (image, texture) = r.get_draw_references();
 
