@@ -7,13 +7,10 @@ pub trait GlorperObject : Send + Sync{
 
     fn get_pos(&self) -> Pos;
 
-    fn get_draw_references(&self) -> Vec<TextureObject>;
-
-    fn count_draw_references(&self) -> u16;
-
-    fn add_draw_reference(&self, a : &TextureObject) -> u16;
+    fn get_texture_id(&self) -> i16;
 
     fn get_interaction_type(&self) -> u16;
+
 
 }
 

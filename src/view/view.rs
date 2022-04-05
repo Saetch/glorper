@@ -1,14 +1,18 @@
-use std::{sync::Arc, path::Path};
+use std::{sync::{Arc, RwLock}, path::Path, collections::HashMap};
 
 use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed};
 use opengl_graphics::{GlGraphics};
 use piston::RenderArgs;
+
+use crate::model::glorper_object::GlorperObject;
 
 use super::texture_object::TextureObject;
 
 
 pub struct View{
     pub(crate) gl: GlGraphics,
+    objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>,
+    textureMap : HashMap<i16, TextureObject>
 }
 
 
@@ -22,6 +26,24 @@ pub struct View{
         const DARKRED: [f32; 4] = [0.3, 0.02, 0.0, 1.0];
 
 impl View {
+
+    pub fn new(gl: GlGraphics, objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>) -> View{
+        let v = View{
+            gl: gl,
+            objects : objects,
+            textureMap : TextureObject::loadTextureMap()
+        };
+
+
+        v.init();
+
+        return v;
+    }
+
+    //might be parameterized later
+    pub fn init(&self){
+
+    }
     
     pub fn render(&mut self, args: &RenderArgs){
 

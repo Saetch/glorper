@@ -1,3 +1,4 @@
+pub mod objects;
 pub mod glorper_field_tile;
 pub mod glorper_map;
 pub mod model;

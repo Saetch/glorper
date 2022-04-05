@@ -47,17 +47,17 @@ fn main() {
 
 
         let model_arc = Arc::new(Model{
-             objects: Vec::new(),
+             objects: Arc::new(RwLock::new(Vec::new())),
             });
         let cntrl = Controller{model: model_arc.clone()};
-        let mut view = View{gl: GlGraphics::new(opengl)};
+        let mut view = View::new(GlGraphics::new(opengl), model_arc.objects.clone());
 
 
         //create the channel for communication between threads
         let (modelchannelsender, modelchannelreceiver) = flume::unbounded();
         let (controllerchannelsender, controllerchannelreceiver) = flume::unbounded();
 
-
+            model_arc.initialize();
 
         /*
             create 2 threads. One for the controller, one for the model
