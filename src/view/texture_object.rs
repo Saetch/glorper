@@ -40,6 +40,7 @@ impl TextureObject {
         }
     }
 
+    #[inline(always)]
     pub fn id_test() -> i16{
         -1
     }
