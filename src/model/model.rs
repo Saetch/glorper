@@ -1,6 +1,12 @@
+use std::sync::{Arc, RwLock};
+
 use piston::UpdateArgs;
 
+use super::glorper_object::GlorperObject;
+
 pub struct Model{
+
+    pub(crate) objects: Vec<Arc<RwLock<dyn GlorperObject>>>
 
 }
 

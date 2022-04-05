@@ -46,7 +46,9 @@ fn main() {
 
 
 
-        let model_arc = Arc::new(Model{});
+        let model_arc = Arc::new(Model{
+             objects: Vec::new(),
+            });
         let cntrl = Controller{model: model_arc.clone()};
         let mut view = View{gl: GlGraphics::new(opengl)};
 
