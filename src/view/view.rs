@@ -4,12 +4,13 @@ use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, Dra
 use opengl_graphics::{GlGraphics};
 use piston::RenderArgs;
 
-use crate::model::glorper_object::GlorperObject;
+use crate::model::{glorper_object::GlorperObject, objects};
 
 use super::texture_object::TextureObject;
 
 
 pub struct View{
+    pub(crate) cameraPos : (f32, f32),
     pub(crate) gl: GlGraphics,
     objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>,
     textureMap : HashMap<i16, TextureObject>
@@ -29,6 +30,7 @@ impl View {
 
     pub fn new(gl: GlGraphics, objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>) -> View{
         let v = View{
+            cameraPos: (0.0f32, 0.0f32),
             gl: gl,
             objects : objects,
             textureMap : TextureObject::loadTextureMap()
@@ -63,14 +65,13 @@ impl View {
 
 
 
-         let r_object = TextureObject::new_test();
 
         self.gl.draw(args.viewport(), |c, gl| {
             //the functions used here, like clear/rectangle are in namespace graphics::*, the use statement makes these omittable
             clear(DARKRED, gl);
 
             View::draw_background(&c, gl, args);
-            View::draw_objects(&c, gl, args, &r_object);
+            View::draw_objects(&c, gl, args, &self.objects, &self.textureMap);
 
 
 
@@ -107,12 +108,24 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
 }
 
 #[inline(always)]
-pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, r : &TextureObject){
-    let (image, texture) = r.get_draw_references();
+pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, objs: &Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>, tex_map : &HashMap<i16, TextureObject>){
 
-    let transform = c.transform.trans(args.window_size[0]/2.0 - image.rectangle.unwrap()[2]/2.0, args.window_size[1]/2.0 - image.rectangle.unwrap()[3]/2.0);
+    let read_lock = objs.read();
+    if read_lock.is_err(){
+        println!("Error getting read-lock for object vector!");
+        return;
+    }
+    let vec = read_lock.unwrap();
+    for object_ref in &*vec{
+        let object = object_ref.read().unwrap();
+        let (image, texture) = tex_map.get(&object.get_texture_id()).unwrap().get_draw_references();
 
-    image.draw(texture, &DrawState::default(), transform, gl);
+        let transform = c.transform.trans(args.window_size[0]/2.0 - image.rectangle.unwrap()[2]/2.0, args.window_size[1]/2.0 - image.rectangle.unwrap()[3]/2.0);
+        image.draw(texture, &DrawState::default(), transform, gl);
+    }
+    
+
+
 
 
 }
