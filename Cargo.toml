@@ -12,6 +12,7 @@ pistoncore-glutin_window = "0.69.0"
 piston2d-opengl_graphics = "0.79.0"
 flume = "*"
 rand ="*"
+imageproc = "0.22.0"
 
 [profile.release_opt]
 inherits = "release"

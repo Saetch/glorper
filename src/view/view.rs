@@ -1,7 +1,7 @@
 use std::{sync::{Arc, RwLock}, path::Path, collections::HashMap};
 
 use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed};
-use opengl_graphics::{GlGraphics};
+use opengl_graphics::{GlGraphics, Texture};
 use piston::RenderArgs;
 
 use crate::model::{glorper_object::GlorperObject, objects};
@@ -102,6 +102,8 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
     let window_width = args.window_size[0];
     let window_height = args.window_size[1];
     let rec = Rectangle::new(BLACK);
+    let texture = Texture::new(0,1920, 1080);
+
     let bkgrnd = rectangle_by_corners(50.0 , 50.0,  750.0, 550.0);
     //this function was called with &c, but it does not need to be dereferenced here (*c), as this is automatically done, so Object functions can be called on reference (autoderef)
     rec.draw(bkgrnd, &DrawState::default(), c.transform, gl);
@@ -119,7 +121,7 @@ pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, objs: 
     for object_ref in &*vec{
         let object = object_ref.read().unwrap();
         let (image, texture) = tex_map.get(&object.get_texture_id()).unwrap().get_draw_references();
-
+        
         let transform = c.transform.trans(args.window_size[0]/2.0 - image.rectangle.unwrap()[2]/2.0, args.window_size[1]/2.0 - image.rectangle.unwrap()[3]/2.0);
         image.draw(texture, &DrawState::default(), transform, gl);
     }
