@@ -1,5 +1,6 @@
 use crate::view::texture_object::TextureObject;
 
+//TODO: complete this if intended to add more complex objects!
 pub trait GlorperObject : Send + Sync{
     fn get_object_type(&self) -> String{
         return String::from("Type not yet implemented");

@@ -5,7 +5,7 @@ use opengl_graphics::{OpenGL, GlGraphics};
 use piston::{WindowSettings, Events, EventSettings, RenderEvent, UpdateEvent, ButtonEvent};
 
 
-use crate::{controller::controller::{Controller}, constants::{FIELDWIDTH, FIELDHEIGHT}, model::model::Model, view::view::View};
+use crate::{controller::controller::{Controller}, constants::{FIELDWIDTH, FIELDHEIGHT}, model::{model::Model, glorper_object::Pos}, view::view::View};
 
 
 extern crate glutin_window;
@@ -45,10 +45,9 @@ fn main() {
 
 
 
+        let model_arc = Arc::new(Model::new());
 
-        let model_arc = Arc::new(Model{
-             objects: Arc::new(RwLock::new(Vec::new())),
-            });
+
         let cntrl = Controller{model: model_arc.clone()};
         let mut view = View::new(GlGraphics::new(opengl), model_arc.objects.clone());
 

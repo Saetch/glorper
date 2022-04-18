@@ -25,6 +25,8 @@ pub struct View{
         const DARKGREY: [f32; 4] = [0.2, 0.2, 0.2, 1.0];
         const BLACK : [f32; 4] = [0.02, 0.02, 0.02, 1.0];
         const DARKRED: [f32; 4] = [0.3, 0.02, 0.0, 1.0];
+        const DARKBLUE: [f32; 4] = [0.02, 0.01, 0.5, 1.0 ];
+        const DARKERBLUE: [f32; 4] = [0.02, 0.01, 0.3, 1.0];
 
 impl View {
 
@@ -68,7 +70,7 @@ impl View {
 
         self.gl.draw(args.viewport(), |c, gl| {
             //the functions used here, like clear/rectangle are in namespace graphics::*, the use statement makes these omittable
-            clear(DARKRED, gl);
+            clear(DARKBLUE, gl);
 
             View::draw_background(&c, gl, args);
             View::draw_objects(&c, gl, args, &self.objects, &self.textureMap);
@@ -101,11 +103,14 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
 
     let window_width = args.window_size[0];
     let window_height = args.window_size[1];
+    let big_rec = Rectangle::new(DARKERBLUE);
     let rec = Rectangle::new(BLACK);
-    let texture = Texture::new(0,1920, 1080);
 
-    let bkgrnd = rectangle_by_corners(50.0 , 50.0,  750.0, 550.0);
+    let big_bkgrnd = rectangle_by_corners(10.0, 10.0, 790.0 , 590.0);
+    let bkgrnd = rectangle_by_corners(18.0 , 18.0,  782.0, 582.0);
+    
     //this function was called with &c, but it does not need to be dereferenced here (*c), as this is automatically done, so Object functions can be called on reference (autoderef)
+    big_rec.draw(big_bkgrnd, &DrawState::default(), c.transform, gl);
     rec.draw(bkgrnd, &DrawState::default(), c.transform, gl);
 }
 
