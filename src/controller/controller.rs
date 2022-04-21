@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 
 use piston::{ButtonArgs, ButtonState, Button, Key};
 
@@ -7,7 +7,7 @@ use piston::{ButtonArgs, ButtonState, Button, Key};
 use crate::model::model::Model;
 
 pub struct Controller{
-    pub(crate) model : Arc<Model>
+    pub(crate) model : Arc<RwLock<Model>>,
 }
 
 
@@ -31,7 +31,7 @@ impl Controller {
     fn compute_keyboard(& self, key: Key){
 
         match key{
-            Key::H => self.model.tickle_glorper(),
+            Key::H => self.model.read().unwrap().tickle_glorper(),
             _ =>(),
         }
 

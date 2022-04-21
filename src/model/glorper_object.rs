@@ -17,6 +17,20 @@ pub trait GlorperObject : Send + Sync{
 
 #[derive(Clone)]
 pub struct Pos {
-    pub(crate) x : f32,
-    pub(crate) y : f32,
+    pub(crate) x : f64,
+    pub(crate) y : f64,
+}
+
+impl Pos {
+    pub fn add_x_y(&mut self, x: f64, y:f64){
+        self.x+=x;
+        self.y+=y;
+    }
+    pub fn add_x(&mut self, x:f64){
+        self.x+=x;
+    }
+
+    pub fn add_y(&mut self, y:f64){
+        self.y+=y;
+    }
 }

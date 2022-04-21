@@ -45,19 +45,19 @@ fn main() {
 
 
 
-        let model_arc = Arc::new(Model::new());
+        let model_arc = Arc::new(RwLock::new(Model::new()));
 
+        let model_lock = model_arc.read().unwrap();
 
         let cntrl = Controller{model: model_arc.clone()};
-        let mut view = View::new(GlGraphics::new(opengl), model_arc.objects.clone());
+        let mut view = View::new(GlGraphics::new(opengl), model_lock.objects.clone(), model_arc.clone());
 
 
         //create the channel for communication between threads
         let (modelchannelsender, modelchannelreceiver) = flume::unbounded();
         let (controllerchannelsender, controllerchannelreceiver) = flume::unbounded();
 
-            model_arc.initialize();
-
+            drop(model_lock);
         /*
             create 2 threads. One for the controller, one for the model
 
@@ -83,7 +83,9 @@ fn main() {
                 let arg_guard = modelchannelreceiver.recv();
                 if !arg_guard.is_err(){
                     let args = arg_guard.unwrap();
-                    model_arc.update(&args);                    //this only works directly if model is immutable. Otherwise an RwLock is needed. To keep it immutable, all variables that might change need to be synced (RwLock or Mutex)
+                    let mut model_lock = model_arc.write().unwrap();
+                    model_lock.update(&args);
+                    drop(model_lock);
                 }
             }
         });

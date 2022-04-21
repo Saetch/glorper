@@ -1,10 +1,11 @@
-use std::{sync::{Arc, RwLock}, path::Path, collections::HashMap};
+use std::{sync::{Arc, RwLock}, path::Path, collections::HashMap, f64::consts::PI};
 
-use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed};
+use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed, ellipse, ellipse_from_to, Ellipse};
+use imageproc::{rect::Rect, drawing::draw_filled_ellipse};
 use opengl_graphics::{GlGraphics, Texture};
 use piston::RenderArgs;
 
-use crate::model::{glorper_object::GlorperObject, objects};
+use crate::model::{glorper_object::GlorperObject, objects, model::Model};
 
 use super::texture_object::TextureObject;
 
@@ -13,7 +14,8 @@ pub struct View{
     pub(crate) cameraPos : (f32, f32),
     pub(crate) gl: GlGraphics,
     objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>,
-    textureMap : HashMap<i16, TextureObject>
+    textureMap : HashMap<i16, TextureObject>,
+    model: Arc<RwLock<Model>>,
 }
 
 
@@ -30,12 +32,13 @@ pub struct View{
 
 impl View {
 
-    pub fn new(gl: GlGraphics, objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>) -> View{
+    pub fn new(gl: GlGraphics, objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>, model:Arc<RwLock<Model>>) -> View{
         let v = View{
             cameraPos: (0.0f32, 0.0f32),
             gl: gl,
             objects : objects,
-            textureMap : TextureObject::loadTextureMap()
+            textureMap : TextureObject::loadTextureMap(),
+            model : model,
         };
 
 
@@ -73,7 +76,7 @@ impl View {
             clear(DARKBLUE, gl);
 
             View::draw_background(&c, gl, args);
-            View::draw_objects(&c, gl, args, &self.objects, &self.textureMap);
+            View::draw_objects(&c, gl, args, &self.objects, &self.textureMap, &self.model);
 
 
 
@@ -115,7 +118,7 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
 }
 
 #[inline(always)]
-pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, objs: &Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>, tex_map : &HashMap<i16, TextureObject>){
+pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, objs: &Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>, tex_map : &HashMap<i16, TextureObject>, model : &Arc<RwLock<Model>> ){
 
     let read_lock = objs.read();
     if read_lock.is_err(){
@@ -131,10 +134,19 @@ pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, objs: 
         image.draw(texture, &DrawState::default(), transform, gl);
     }
     
+    let model_lock = model.read().unwrap();
+    //Draw Glorper
+    let rect = rectangle_by_corners(800.0 * model_lock.glorp_pos.x - model_lock.glorp_radius/2.0,  600.0 - 600.0 * model_lock.glorp_pos.y - model_lock.glorp_radius/2.0,
+        800.0*model_lock.glorp_pos.x + model_lock.glorp_radius/2.0, 600.0 - 600.0 * model_lock.glorp_pos.y + model_lock.glorp_radius/2.0);
+    let circle =  Ellipse::new(BLUE);
+    let circle_two = Ellipse::new(DARKBLUE);
 
-
-
-
+    let rect_two = rectangle_by_corners(800.0 * model_lock.glorp_pos.x - model_lock.glorp_radius/1.6,  600.0 - 600.0 * model_lock.glorp_pos.y - model_lock.glorp_radius/1.6,
+        800.0*model_lock.glorp_pos.x + model_lock.glorp_radius/1.6, 600.0 - 600.0 * model_lock.glorp_pos.y + model_lock.glorp_radius/1.6);
+    
+    circle_two.draw(rect_two, &DrawState::default(), c.transform, gl);
+    circle.draw(rect, &DrawState::default(), c.transform, gl);
+    
 }
 }
 

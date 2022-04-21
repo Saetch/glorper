@@ -8,7 +8,7 @@ pub struct TestObject{
 impl TestObject{
     pub fn new() -> Self{
         TestObject{
-            pos: Pos { x: 0.0f32, y: 0.0f32 },
+            pos: Pos { x: 0.0, y: 0.0 },
             texture_id : -1,
         }
     }
