@@ -1,6 +1,6 @@
 use std::{sync::{Arc, RwLock}, path::Path, collections::HashMap, f64::consts::PI};
 
-use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed, ellipse, ellipse_from_to, Ellipse};
+use graphics::{Context, Rectangle, rectangle::{rectangle_by_corners}, clear, DrawState, Transformed, ellipse, ellipse_from_to, Ellipse, color::WHITE};
 use imageproc::{rect::Rect, drawing::draw_filled_ellipse};
 use opengl_graphics::{GlGraphics, Texture};
 use piston::RenderArgs;
@@ -29,6 +29,7 @@ pub struct View{
         const DARKRED: [f32; 4] = [0.3, 0.02, 0.0, 1.0];
         const DARKBLUE: [f32; 4] = [0.02, 0.01, 0.5, 1.0 ];
         const DARKERBLUE: [f32; 4] = [0.02, 0.01, 0.3, 1.0];
+        const SEMIALPHAWHITE: [f32;4] = [0.94, 0.94, 0.94, 0.3];
 
 impl View {
 
@@ -109,12 +110,19 @@ pub fn draw_background(c: &Context, gl: &mut GlGraphics, args: &RenderArgs){
     let big_rec = Rectangle::new(DARKERBLUE);
     let rec = Rectangle::new(BLACK);
 
+
+
+
+
+
+    
     let big_bkgrnd = rectangle_by_corners(10.0, 10.0, 790.0 , 590.0);
     let bkgrnd = rectangle_by_corners(18.0 , 18.0,  782.0, 582.0);
     
     //this function was called with &c, but it does not need to be dereferenced here (*c), as this is automatically done, so Object functions can be called on reference (autoderef)
     big_rec.draw(big_bkgrnd, &DrawState::default(), c.transform, gl);
     rec.draw(bkgrnd, &DrawState::default(), c.transform, gl);
+
 }
 
 #[inline(always)]
@@ -147,7 +155,17 @@ pub fn draw_objects( c: &Context, gl: &mut GlGraphics, args: &RenderArgs, objs: 
     circle_two.draw(rect_two, &DrawState::default(), c.transform, gl);
     circle.draw(rect, &DrawState::default(), c.transform, gl);
     
-}
+
+
+    //draw extra circle to indicate stopped
+    if model_lock.stopped {
+        let additional_circle = Ellipse::new(SEMIALPHAWHITE);
+        let additional_rect = rectangle_by_corners(800.0 * model_lock.glorp_pos.x - model_lock.glorp_radius/(1.95 * ( model_lock.stop_duration_seconds_max / model_lock.stop_duration_seconds_current ) ),  600.0 - 600.0 * model_lock.glorp_pos.y - model_lock.glorp_radius/(1.95 * ( model_lock.stop_duration_seconds_max / model_lock.stop_duration_seconds_current ) ),
+            800.0*model_lock.glorp_pos.x + model_lock.glorp_radius/(1.95 * ( model_lock.stop_duration_seconds_max / model_lock.stop_duration_seconds_current) ), 600.0 - 600.0 * model_lock.glorp_pos.y + model_lock.glorp_radius/(1.95* ( model_lock.stop_duration_seconds_max / model_lock.stop_duration_seconds_current ) ));
+
+            additional_circle.draw(additional_rect, &DrawState::new_alpha(), c.transform, gl);
+    }
+    }
 }
 
 //TODO
