@@ -2,16 +2,16 @@ use std::{sync::{Arc, RwLock}, time::{SystemTime, Duration}, cell::RefCell};
 
 use piston::UpdateArgs;
 
-use super::{glorper_object::{GlorperObject, Pos}, objects::test_object::TestObject};
+use super::{glorper_object::{GlorperObject, Pos}, objects::test_object::TestObject, field_thing::FieldThing};
 
 pub struct Model{
 
     pub(crate) objects: Arc<RwLock<Vec<Arc<RwLock<dyn GlorperObject>>>>>,
+    pub(crate) glorper_field_things: Arc<RwLock<Vec<Arc<RwLock<dyn FieldThing>>>>>,
     pub(crate) glorp_pos: Pos,
     pub(crate) glorp_type: u8,
     pub(crate) glorp_radius: f64,
     start_time: SystemTime,
-    diff: f64,
     highest_point:f64,
     acceleration: f64,
     speed: f64,
@@ -70,12 +70,12 @@ impl Model {
 
     pub fn new()-> Self{
         let mut ret = Model {              objects: Arc::new(RwLock::new(Vec::new())),
+            glorper_field_things: Arc::new(RwLock::new(Vec::new())),
             glorp_pos: Pos{x: 0.5, y:0.6},
             glorp_type: 1,
             glorp_radius: 30.0,
             start_time: SystemTime::now(),
             highest_point: 0.0,                     //use later, maybe for high score?
-            diff: 0.0,
             acceleration: 1.4,
             speed: 0.0,
             bounce_speed: -1.0,
@@ -84,7 +84,6 @@ impl Model {
             stopped: false,   
             ingame_height: 0.0, 
         };
-            ret.diff = ret.highest_point-low_point;
             return ret;
     }
 
