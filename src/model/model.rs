@@ -1,8 +1,8 @@
-use std::{sync::{Arc, RwLock}, time::{SystemTime, Duration}, cell::RefCell};
+use std::{sync::{Arc, RwLock, RwLockWriteGuard}, time::{SystemTime, Duration}, cell::RefCell};
 
 use piston::UpdateArgs;
 
-use super::{glorper_object::{GlorperObject, Pos}, objects::test_object::TestObject, field_thing::FieldThing};
+use super::{glorper_object::{GlorperObject, Pos}, objects::test_object::TestObject, field_thing::FieldThing, wall::Wall};
 
 pub struct Model{
 
@@ -69,8 +69,19 @@ impl Model {
     }
 
     pub fn new()-> Self{
+
+        let field_items = Arc::new(RwLock::new(Vec::new()));
+        
+        let mut field_lock = field_items.write().unwrap();
+
+        init_field_items(&mut field_lock);
+
+
+
+        drop(field_lock);
+
         let mut ret = Model {              objects: Arc::new(RwLock::new(Vec::new())),
-            glorper_field_things: Arc::new(RwLock::new(Vec::new())),
+            glorper_field_things: field_items,
             glorp_pos: Pos{x: 0.5, y:0.6},
             glorp_type: 1,
             glorp_radius: 30.0,
@@ -84,7 +95,18 @@ impl Model {
             stopped: false,   
             ingame_height: 0.0, 
         };
+
+
+
             return ret;
     }
 
+}
+
+fn init_field_items(list_lock : &mut RwLockWriteGuard<Vec<Arc<RwLock<dyn FieldThing>>>>){
+    let obj1 = Wall{ width: 10.0, height: 2.0, position: Pos { x: 0.1, y: 0.1 } };
+
+    let arc_obj1 = Arc::new(RwLock::new(obj1));
+
+    list_lock.push(arc_obj1);
 }

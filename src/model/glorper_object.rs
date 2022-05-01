@@ -15,7 +15,7 @@ pub trait GlorperObject : Send + Sync{
 
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Pos {
     pub(crate) x : f64,
     pub(crate) y : f64,
